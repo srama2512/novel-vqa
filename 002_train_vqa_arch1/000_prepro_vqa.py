@@ -116,20 +116,24 @@ def apply_vocab_question(imgs, wtoi):
     return imgs
 
 def get_top_answers(imgs, params):
-    counts = {}
-    for img in imgs:
-        ans = img['ans'] 
-        counts[ans] = counts.get(ans, 0) + 1
+    if params['extern_ans_vocab'] == '':
+        counts = {}
+        for img in imgs:
+            ans = img['ans'] 
+            counts[ans] = counts.get(ans, 0) + 1
 
-    cw = sorted([(count,w) for w,count in counts.iteritems()], reverse=True)
-    print 'top answer and their counts:'    
-    print '\n'.join(map(str,cw[:20]))
-    
-    vocab = []
-    for i in range(params['num_ans']):
-        vocab.append(cw[i][1])
+        cw = sorted([(count,w) for w,count in counts.iteritems()], reverse=True)
+        print 'top answer and their counts:'    
+        print '\n'.join(map(str,cw[:20]))
+        
+        vocab = []
+        for i in range(params['num_ans']):
+            vocab.append(cw[i][1])
 
-    return vocab[:params['num_ans']]
+        return vocab[:params['num_ans']]
+    else:
+        vocab = json.load(open(params['extern_ans_vocab']))
+        return vocab
 
 def encode_question(imgs, params, wtoi):
 

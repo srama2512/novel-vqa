@@ -62,8 +62,9 @@ for i=1,sz do
     xlua.progress(i, sz)
     img_curr = train_list[i]
     dict_element_curr = image_map_json[img_curr]
-    -- print (img_curr)
-    -- print (dict_element_curr)
+    --print (img_curr)
+    --print (dict_element_curr)
+
     if dict_element_curr['set'] == 'train' then
         feat_train[i] = feat_train_orig[dict_element_curr['idx']]:clone()
     elseif dict_element_curr['set'] == 'test' then
