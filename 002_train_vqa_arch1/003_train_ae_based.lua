@@ -62,6 +62,9 @@ if opt.gpuid >= 0 then
   cutorch.setDevice(opt.gpuid + 1)
 end
 
+savedParams = torch.load(opt.model_path)
+print(savedParams)
+
 ------------------------------------------------------------------------
 -- Setting the parameters
 ------------------------------------------------------------------------
@@ -167,7 +170,6 @@ if opt.gpuid >= 0 then
 	dummy_output_q = dummy_output_q:cuda()
 end
 
-savedParams = torch.load(opt.model_path)
 --Processings
 
 embedding_w_q_, embedding_dw_q_ = embedding_net_q:parameters()
