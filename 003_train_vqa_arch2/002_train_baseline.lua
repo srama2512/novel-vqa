@@ -40,6 +40,7 @@ cmd:option('-num_layers', 1, 'number of hidden layers in RNN')
 cmd:option('-common_embedding_size', 1024, 'size of the common embedding vector')
 cmd:option('-num_output', 1000, 'number of output answers')
 cmd:option('-img_norm', 1, 'normalize the image feature. 1 = normalize, 0 = not normalize')
+cmd:option('-nhimage', 4096, 'image feature dimensions')
 
 --check point
 cmd:option('-save_checkpoint_every', 25000, 'how often to save a model checkpoint?')
@@ -73,7 +74,7 @@ local batch_size=opt.batch_size
 print(opt.checkpoint_path)
 local model_path=opt.checkpoint_path
 local nlstm_layers_q=opt.num_layers
-local nhimage=4096
+local nhimage=opt.nhimage
 local noutput = opt.num_output
 local dummy_output_size=1
 local decay_factor = 0.99997592083 -- 50000

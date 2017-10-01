@@ -1,7 +1,7 @@
 # coding: utf-8
 
 import sys
-dataDir = '/media/data/santhosh/VisualQuestionAnswering/VQA'
+dataDir = '/home/santhosh/Projects/VQA/novel-vqa-master/004_vqa_evaluation'
 sys.path.insert(0, '%s/PythonHelperTools/vqaTools' %(dataDir))
 from vqa import VQA
 from vqaEvaluation.vqaEval import VQAEval

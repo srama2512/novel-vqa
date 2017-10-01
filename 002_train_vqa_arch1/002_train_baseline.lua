@@ -31,15 +31,15 @@ cmd:option('-learning_rate_decay_every', 50000, 'every how many iterations there
 cmd:option('-batch_size',500,'batch_size for each iterations')
 cmd:option('-max_iters', 150000, 'max number of iterations to run for ')
 cmd:option('-nhimage', 4096, 'number of image features')
-cmd:option('-input_encoding_size', 512, 'the encoding size of each token in the vocabulary')
+cmd:option('-input_encoding_size', 200, 'the encoding size of each token in the vocabulary')
 cmd:option('-rnn_size',512,'size of the rnn in number of hidden nodes in each layer')
-cmd:option('-rnn_layer',1,'number of the rnn layer')
+cmd:option('-rnn_layer',2,'number of the rnn layer')
 cmd:option('-common_embedding_size', 1024, 'size of the common embedding vector')
 cmd:option('-num_output', 1000, 'number of output answers')
 cmd:option('-img_norm', 1, 'normalize the image feature. 1 = normalize, 0 = not normalize')
 
 --check point
-cmd:option('-save_checkpoint_every', 25000, 'how often to save a model checkpoint?')
+cmd:option('-save_checkpoint_every', 150000, 'how often to save a model checkpoint?')
 cmd:option('-checkpoint_path', 'model/', 'folder to save checkpoints')
 
 -- misc

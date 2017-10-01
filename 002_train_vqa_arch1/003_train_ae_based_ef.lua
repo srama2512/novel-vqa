@@ -27,7 +27,6 @@ cmd:option('-input_json','data_prepro.json','path to the json file containing ad
 -- Model parameter settings
 cmd:option('-model_path', '', 'loading model parameters')
 cmd:option('-learning_rate',1e-4,'learning rate for rmsprop')
-cmd:option('-lr_scale', 1, 'learning rate scale for the encoder and embedding layer')
 cmd:option('-learning_rate_decay_start', -1, 'at what iteration to start decaying learning rate? (-1 = dont)')
 cmd:option('-learning_rate_decay_every', 50000, 'every how many iterations thereafter to drop LR by half?')
 cmd:option('-batch_size',500,'batch_size for each iterations')
@@ -337,7 +336,7 @@ function JdJ(x)
 		encoder_adw_q=encoder_adw_q+encoder_net_buffer_q[3][i] 
 	end
 
-	gradients=join_vector({torch.mul(encoder_adw_q, opt.lr_scale),torch.mul(embedding_dw_q, opt.lr_scale),multimodal_dw}) 
+	gradients=join_vector({encoder_adw_q, embedding_dw_q, multimodal_dw}) 
 	gradients:clamp(-10,10) 
 	if running_avg == nil then
 		running_avg = f

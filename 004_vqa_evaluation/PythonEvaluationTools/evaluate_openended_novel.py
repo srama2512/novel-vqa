@@ -1,7 +1,7 @@
 # coding: utf-8
 
 import sys
-dataDir = '/media/data/santhosh/VisualQuestionAnswering/VQA'
+dataDir = '/home/santhosh/Projects/VQA/novel-vqa-master/004_vqa_evaluation'
 sys.path.insert(0, '%s/PythonHelperTools/vqaTools' %(dataDir))
 from vqa import VQA
 from vqaEvaluation.vqaEval import VQAEval
@@ -12,7 +12,7 @@ import random
 import os
 import pdb
 
-novel = '_novel_2'#'_novel'
+novel = '_novel_new'#'_novel'
 # set up file names and paths
 taskType    ='OpenEnded'
 dataType    ='mscoco'  # 'mscoco' for real and 'abstract_v002' for abstract
