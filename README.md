@@ -43,6 +43,12 @@ This code outputs `vqa_raw_train.json` and `vqa_raw_test.json`.
 Note that the random seed was initially not set for generating the data. As a result, the exact data may not be replicable.
 To ensure reproducability, we have provided the data split that we obtained [here](https://drive.google.com/drive/folders/0B_zNnwTk0MVydVRtQTgtbTl5M0k?usp=sharing).
 The files without any special tagging are the original VQA data split. The files with `_novel_old` tag are the splits used for
-our CVPR acceptance paper. The files with `_novel_new` tag are the corrected splits with 5% of questions removed. 
+our CVPR acceptance paper. The files with `_novel_new` tag are the corrected splits with 5% of questions removed. The code
+to correct the dataset is provided in `005_correction_to_dataset`. 
+
+# Generated Vocabularies 
+We have provided the vocabularies we used for all our experiments in `vocabs/`. It contains the train (`vocab_train.json`), 
+oracle (`vocab_oracle.json`) and general (`vocab_general.json`) vocabularies. It also contains the list of novel words which
+we used (`list_of_novel_words.json`).
 
 
