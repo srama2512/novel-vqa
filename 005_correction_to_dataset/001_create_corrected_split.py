@@ -18,6 +18,7 @@ parser.add_argument('--save_base_annotations', default='/media/data/santhosh/vqa
 parser.add_argument('--save_base_questions', default='/media/data/santhosh/vqa/Questions/', help='path to save train questions for new novel split')
 
 params = vars(parser.parse_args())
+ptagger = nltk.PerceptronTagger()
 
 rem_words = ['p', 'mr', 'k', 'someone', 'g', 'm', 'hi', 'no']
 novel_words = [x for x in json.load(open(params['novel_words'])) if not x in rem_words]
@@ -34,17 +35,18 @@ test_oe_questions_path = params['base_questions'] + 'OpenEnded_mscoco_val2014_no
 test_mcq_questions_path = params['base_questions'] + 'MultipleChoice_mscoco_val2014_novel_old_questions.json'
 
 # Create file paths for saving dataset
-save_train_raw_questions_path = params['save_base_raw'] + 'vqa_raw_train_novel_new.json' 
-save_train_annotations_path = params['save_base_annotations'] + 'mscoco_train2014_novel_new_annotations.json'
-save_train_oe_questions_path = params['save_base_questions'] + 'OpenEnded_mscoco_train2014_novel_new_questions.json'
-save_train_mcq_questions_path = params['save_base_questions'] + 'MultipleChoice_mscoco_train2014_novel_new_questions.json'
-save_test_raw_questions_path = params['save_base_raw'] + 'vqa_raw_test_novel_new.json'
-save_test_annotations_path = params['save_base_annotations'] + 'mscoco_val2014_novel_new_annotations.json'
-save_test_oe_questions_path = params['save_base_questions'] + 'OpenEnded_mscoco_val2014_novel_new_questions.json'
-save_test_mcq_questions_path = params['save_base_questions'] + 'MultipleChoice_mscoco_val2014_novel_new_questions.json'
+save_train_raw_questions_path = params['save_base_raw'] + 'vqa_raw_train_novel_new_2.json' 
+save_train_annotations_path = params['save_base_annotations'] + 'mscoco_train2014_novel_new_2_annotations.json'
+save_train_oe_questions_path = params['save_base_questions'] + 'OpenEnded_mscoco_train2014_novel_new_2_questions.json'
+save_train_mcq_questions_path = params['save_base_questions'] + 'MultipleChoice_mscoco_train2014_novel_new_2_questions.json'
+save_test_raw_questions_path = params['save_base_raw'] + 'vqa_raw_test_novel_new_2.json'
+save_test_annotations_path = params['save_base_annotations'] + 'mscoco_val2014_novel_new_2_annotations.json'
+save_test_oe_questions_path = params['save_base_questions'] + 'OpenEnded_mscoco_val2014_novel_new_2_questions.json'
+save_test_mcq_questions_path = params['save_base_questions'] + 'MultipleChoice_mscoco_val2014_novel_new_2_questions.json'
 
 pluralized_to_orig = {}
 pluralized_noun_words = set()
+novel_words_set = set(novel_words)
 
 bar = progressbar.ProgressBar()
 
@@ -57,6 +59,8 @@ for i, word in bar(enumerate(novel_words)):
         print('Plural = word for %s'%(word))
 
 count_plural_issue = 0
+count_ans_issue = 0
+count_rejected = 0
 
 set_plu = {}
 bar = progressbar.ProgressBar()
@@ -73,17 +77,23 @@ for elCount in bar(range(len(train_raw_questions))):
     text_q = el["question"].lower().replace('/', ' ')
     question_tokenized = word_tokenize(text_q)
     answerSet = set()
+    answerNounSet = set()
     text_ans = []
     for answerEl in elAnno:
         a = answerEl["answer"].lower().replace('/', ' ')
         text_ans.append(a)
         answer = word_tokenize(a)
+        answer_tag = ptagger.tag(answer)
         for a in answer:
             answerSet.add(a)
+        for ap in answer_tag:
+            if ap[1] == 'NN':
+                answerNounSet.add(ap[0])
 
     text = (text_q, text_ans)
     answerList = list(answerSet)
-    
+    answerNounList = list(answerNounSet)
+
     isTestPlural = 0
 
     for qWord in question_tokenized + answerList:
@@ -91,14 +101,23 @@ for elCount in bar(range(len(train_raw_questions))):
             isTestPlural = 1
             break 
 
-    if isTestPlural != 1:
+    isTestAnsNovel = 0
+    
+    for qWord in answerNounList:
+        if qWord in novel_words_set:
+            isTestAnsNovel = 1
+
+    if isTestPlural != 1 and isTestAnsNovel != 1:
         save_train_raw_questions.append(el)
         save_train_annotations["annotations"].append(train_annotations[elCount])
         save_train_oe_questions["questions"].append(train_oe_questions["questions"][elCount])
         save_train_mcq_questions["questions"].append(train_mcq_questions["questions"][elCount])
+    else:
+        count_rejected += 1
 
     count_plural_issue += isTestPlural
-
+    count_ans_issue += isTestAnsNovel
+    
 # Save the new dataset
 with open(save_train_raw_questions_path, 'w') as outfile:
     json.dump(save_train_raw_questions, outfile)
@@ -120,3 +139,5 @@ os.system('cp %s %s'%(test_oe_questions_path, save_test_oe_questions_path))
 os.system('cp %s %s'%(test_mcq_questions_path, save_test_mcq_questions_path))
 
 print 'Number of plural train questions', count_plural_issue
+print 'Number of novel answer train questions', count_ans_issue
+print 'Number of train questions rejected', count_rejected
