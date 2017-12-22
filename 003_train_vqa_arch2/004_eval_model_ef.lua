@@ -288,7 +288,7 @@ for i=1,nqs do
 end
 
 paths.mkdir(opt.out_path)
-saveJson(opt.out_path .. 'OpenEnded_mscoco_val2014_lstm_novel_new_results.json',response);
+saveJson(opt.out_path .. 'OpenEnded_mscoco_val2014_lstm_novel_new_2_results.json',response);
 
 mc_response={};
 
@@ -306,4 +306,4 @@ for i=1,nqs do
 	table.insert(mc_response, {question_id=qids[i],answer=json_file['ix_to_ans'][tostring(tmp_idx[tmp2[1]])]})
 end
 
-saveJson(opt.out_path .. 'MultipleChoice_mscoco_val2014_lstm_novel_new_results.json',mc_response);
+saveJson(opt.out_path .. 'MultipleChoice_mscoco_val2014_lstm_novel_new_2_results.json',mc_response);

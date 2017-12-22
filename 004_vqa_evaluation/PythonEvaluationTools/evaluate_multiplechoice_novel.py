@@ -12,7 +12,7 @@ import random
 import os
 import pdb
 
-novel = '_novel_new'#'_novel'
+novel = '_novel_new_2'#'_novel'
 # set up file names and paths
 taskType    ='MultipleChoice'
 dataType    ='mscoco'  # 'mscoco' for real and 'abstract_v002' for abstract
