@@ -1,3 +1,9 @@
+"""
+Part 1:
+Code to tokenize the questions and answers, tag them and 
+create a count over the singular nouns present in the train dataset.
+"""
+
 import nltk
 import string
 from random import shuffle, seed

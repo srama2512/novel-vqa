@@ -1,3 +1,12 @@
+"""
+Part 2:
+    Code to take the train nouns and test nouns computed in the
+    previous part, compare them with the list of nouns kept
+    aside from the clustering for train and test splits, and 
+    get a count of the novel nouns present in the train set.
+    Ideally this should be zero. But some errors in tagging or
+    degenerate nouns can cause a small intersection.
+"""
 import json
 
 nouns_vqa = json.load(open('preprocessed/nouns_vqa.json'))
@@ -11,9 +20,6 @@ filteredTrainNouns = set()
 filteredTestNouns = set()
 
 # Verify that train and novel words have no overlap
-#print(set(allTrainNouns) & testNouns)
-#assert(len(set(allTrainNouns) & testNouns) == 0)
-#print('Train and novel nouns have 0 overlap!')
 print('Novel nouns in train: %d'%(len(set(allTrainNouns)&testNouns)))
 print(set(allTrainNouns) & testNouns)
 
