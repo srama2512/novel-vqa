@@ -11,6 +11,7 @@ import json
 import nltk
 import string
 import argparse
+import subprocess as sp
 from joblib import load, dump
 from random import shuffle, seed
 from joblib import Parallel, delayed
@@ -64,7 +65,7 @@ def prepro_question(imgs, anns, params):
         for ans in anns[i]['answers']:
             ans_ws = word_tokenize(ans['answer'].lower().replace('/', ' '))
             add_check = 0
-            for aS in answeListt:
+            for aS in answerList:
                 if ans_ws == aS:
                     add_check = 1
                     break
@@ -140,6 +141,7 @@ def main_vqa(params):
     imgs_test = []
 
     if not os.path.isfile(os.path.join(params['save_path'], 'VQA.json')):
+        sp.call('mkdir %s'%(params['save_path']), shell=True)
         imgs_train = json.load(open(params['input_train_json'], 'r'))
         imgs_test = json.load(open(params['input_test_json'], 'r'))
         anns_train = json.load(open(params['input_train_annotations'], 'r'))['annotations']
