@@ -16,14 +16,11 @@ from pattern.en import pluralize
 parser = argparse.ArgumentParser()
 parser.add_argument('--save_path', default='preprocessed', type=str, help='Path where the preprocessed files are stored')
 
-params = parser.parse_args()
+params = vars(parser.parse_args())
 
 nouns_vqa = json.load(open(os.path.join(params['save_path'], 'nouns_vqa.json')))
-trainNouns = set(json.load(open(os.path.join(params['save_path'], 'trainNouns.json'))))
-testNouns = set(json.load(open(os.path.join(params['save_path'], 'testNouns.json'))))
-testNounsPlural = set()
-for n in testNouns:
-    testNounsPlural.add(pluralize(n))
+trainNouns = set(json.load(open('trainNouns.json')))
+testNouns = set(json.load(open('testNouns.json')))
 
 allTrainNouns = nouns_vqa['nouns_train']
 allTestNouns = nouns_vqa['nouns_test']
