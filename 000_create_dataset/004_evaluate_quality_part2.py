@@ -11,6 +11,8 @@ import os
 import json
 import argparse
 
+from pattern.en import pluralize
+
 parser = argparse.ArgumentParser()
 parser.add_argument('--save_path', default='preprocessed', type=str, help='Path where the preprocessed files are stored')
 
@@ -19,6 +21,9 @@ params = parser.parse_args()
 nouns_vqa = json.load(open(os.path.join(params['save_path'], 'nouns_vqa.json')))
 trainNouns = set(json.load(open(os.path.join(params['save_path'], 'trainNouns.json'))))
 testNouns = set(json.load(open(os.path.join(params['save_path'], 'testNouns.json'))))
+testNounsPlural = set()
+for n in testNouns:
+    testNounsPlural.add(pluralize(n))
 
 allTrainNouns = nouns_vqa['nouns_train']
 allTestNouns = nouns_vqa['nouns_test']
@@ -29,6 +34,9 @@ filteredTestNouns = set()
 # Verify that train and novel words have no overlap
 print('# Novel nouns in train: %d'%(len(set(allTrainNouns)&testNouns)))
 print('Novel nouns in train: ', set(allTrainNouns) & testNouns)
+# Number of plural forms of novel words in train set
+print('# Plural forms of Novel nouns in train: %d'(len(set(allTrainNouns) & testNounsPlural)))
+print('Plural forms of Novel nouns in train', set(allTrainNouns) & testNounsPlural)
 
 for n in allTrainNouns:
     if n in trainNouns:
@@ -43,4 +51,4 @@ print('Number of train nouns: %d'%(len(set(filteredTrainNouns))))
 print('Number of test nouns: %d'%(len(set(filteredTestNouns))))
 print('Number of test only nouns: %d'%(len(set(filteredTestNouns)-set(filteredTrainNouns))))
 print('Number of nouns in both train and test: %d'%(len(set(filteredTestNouns) & set(filteredTrainNouns))))
-    
+ 
