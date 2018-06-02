@@ -19,21 +19,36 @@ parser.add_argument('--train_novel_annotations', default='/media/data/santhosh/v
 params = vars(parser.parse_args())
 
 novel = json.load(open(params['novel_words']))
+# Pluralize all the novel words 
 novel_plu = [pluralize(p) for p in novel]
 
+# Load the old training data (CVPR'17 version)
 questions = json.load(open(params['train_raw_novel']))
 anns = json.load(open(params['train_novel_annotations']))['annotations']
 answers = [[l["answer"] for l in x["answers"]] for x in anns]
 
-# for a, b in zip(novel, novel_plu): print a, b
+# Print the novel words, pluralizations
+print('===========================================================')
+print('============== Novel words and plural forms ===============')
+print('===========================================================')
+for a, b in zip(novel, novel_plu): print a, b
+print('===========================================================')
 
-num_aff = 0
-num_aff_noplu = 0
-num_total = 0
-num_aff_ans_noplu = 0
+# Checking for 3 issues
+# (1) Plural versions of novel words present in training data
+# (2) Different senses of novel words (other than nouns) present in training data
+# (3) Novel words in answers due to senses wrongly classified
 
+num_aff = 0 # Number of novel words suffering from (1)
+num_aff_noplu = 0 # Number of novel words suffering from (2)
+num_total = 0 # Total number of affected novel words
+num_aff_ans_noplu = 0 # Number of novel words suffering from (3)
+
+# Tokenized questions, answers
 toks = []
+# Raw questions, answers
 texts = []
+
 if not os.path.exists('tokenizations.json'):
     bar = progressbar.ProgressBar()
     for q, ans in bar(zip(questions, answers)):
@@ -61,85 +76,89 @@ tokenizations = json.load(open('tokenizations.json', 'r'))
 toks = tokenizations['toks']
 texts = tokenizations['texts']
 
-num_sent_total = 0
-num_sent_plu = 0
-num_sent_noplu = 0
-num_sent_ans_noplu = 0
+num_sent_total = 0 # Total number of affected questions
+num_sent_plu = 0 # Number of questions suffering from (1)
+num_sent_noplu = 0 # Number of questions suffering from (2)
+num_sent_ans_noplu = 0 # Number of questions suffering from (3)
+# Note: The above will have an overcount because each sentence can have 
+# more than one novel word. 
 
 all_plu = []
 all_noplu = []
 all_ans_noplu = []
 f = open('log2.txt', 'w')
 bar = progressbar.ProgressBar()
+# For each novel word
 for n_plu, n in bar(zip(novel_plu, novel)):
-	if n == 'no': continue
-	if n_plu in ['ps', 'ks', 'mrs',  'someones', 'gs', 'ms', 'his']: continue
-	cnt_plu = 0
-	cnt_noplu = 0
-	cnt_ans_noplu = 0
-	cons_plu = []
-	cons_noplu = []
-	cons_ans_noplu = []
-	for tok, text in zip(toks, texts):
-		hit_plu = -1
-		hit_noplu = -1
-		hit_ans_noplu = -1
-		if n_plu in tok[0]:
-			hit_plu = 1
+    # Ignoring some useless words
+    if n == 'no': continue
+    if n_plu in ['ps', 'ks', 'mrs',  'someones', 'gs', 'ms', 'his']: continue
+    cnt_plu = 0 # Number of questions where plural form of this word occurs (issue 1)
+    cnt_noplu = 0 # Number of questions where different senses of this word occurs (issue 2)
+    cnt_ans_noplu = 0 # Number of answers where this word occurs (issue 3)
+    cons_plu = []
+    cons_noplu = []
+    cons_ans_noplu = []
+    for tok, text in zip(toks, texts):
+        hit_plu = -1
+        hit_noplu = -1
+        hit_ans_noplu = -1
+        if n_plu in tok[0]:
+            hit_plu = 1
 
-		if n in tok[0]:
-			hit_noplu = 1
+        if n in tok[0]:
+            hit_noplu = 1
 
-		for a_tok in tok[1]:
-			if n in a_tok:
-				hit_noplu = 1
-			if n_plu in a_tok:
-				hit_plu = 1
-		if n in tok[2]:
-                        hit_ans_noplu = 1
+        for a_tok in tok[1]:
+            if n in a_tok:
+                hit_noplu = 1
+            if n_plu in a_tok:
+                hit_plu = 1
+        if n in tok[2]:
+            hit_ans_noplu = 1
 
-		if hit_noplu == 1:
-			if not (n, text) in cons_noplu:
-				cons_noplu.append((n, text))
-				cnt_noplu += 1
-		if hit_plu == 1:
-			if not (n_plu, text) in cons_plu:
-				cons_plu.append((n_plu, text))
-				cnt_plu += 1
-        
-                if hit_ans_noplu == 1:
-                        if not (n, text, tok[2]) in cons_ans_noplu:
-                                cons_ans_noplu.append((n, text, tok[2]))
-                                cnt_ans_noplu += 1
+        if hit_noplu == 1:
+            if not (n, text) in cons_noplu:
+                cons_noplu.append((n, text))
+                cnt_noplu += 1
+        if hit_plu == 1:
+            if not (n_plu, text) in cons_plu:
+                cons_plu.append((n_plu, text))
+                cnt_plu += 1
+        if hit_ans_noplu == 1:
+            if not (n, text, tok[2]) in cons_ans_noplu:
+                cons_ans_noplu.append((n, text, tok[2]))
+                cnt_ans_noplu += 1
 
-	final_noplu = []
-	final_plu = []
-	final_ans_noplu = []
-	for x in cons_noplu:
-		if not x in final_noplu:
-			final_noplu.append(x)
-	for x in cons_plu:
-		if not x in final_plu:
-			final_plu.append(x) 
-        for x in cons_ans_noplu:
-                if not x in final_ans_noplu:
-                        final_ans_noplu.append(x)
+    final_noplu = []
+    final_plu = []
+    final_ans_noplu = []
 
-	all_plu += final_plu
-	all_noplu += final_noplu
-        all_ans_noplu += final_ans_noplu
+    for x in cons_noplu:
+        if not x in final_noplu:
+            final_noplu.append(x)
+    for x in cons_plu:
+        if not x in final_plu:
+            final_plu.append(x) 
+    for x in cons_ans_noplu:
+        if not x in final_ans_noplu:
+            final_ans_noplu.append(x)
 
-	num_total += 1
+    all_plu += final_plu
+    all_noplu += final_noplu
+    all_ans_noplu += final_ans_noplu
 
-	num_sent_plu += cnt_plu
-	num_sent_noplu += cnt_noplu
-	num_sent_ans_noplu += cnt_ans_noplu
+    num_total += 1
 
-	if cnt_plu > 0: num_aff += 1
-	if cnt_noplu > 0: num_aff_noplu += 1
-        if cnt_ans_noplu > 0: num_aff_ans_noplu += 1
+    num_sent_plu += cnt_plu
+    num_sent_noplu += cnt_noplu
+    num_sent_ans_noplu += cnt_ans_noplu
 
-	f.write('%20s%20s%20s%20s%20s\n' % (n, n_plu, cnt_noplu, cnt_plu, cnt_ans_noplu))
+    if cnt_plu > 0: num_aff += 1
+    if cnt_noplu > 0: num_aff_noplu += 1
+    if cnt_ans_noplu > 0: num_aff_ans_noplu += 1
+
+    f.write('%20s%20s%20s%20s%20s\n' % (n, n_plu, cnt_noplu, cnt_plu, cnt_ans_noplu))
 
 with open('log_mine_json_dump.json', 'w') as outfile:
     json.dump({'plu' : all_plu, 'noplu' : all_noplu, 'ans_noplu': all_ans_noplu}, outfile)
