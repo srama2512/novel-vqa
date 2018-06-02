@@ -29,11 +29,11 @@ cmd:option('-input_json','data_prepro.json','path to the json file containing ad
 
 -- Model parameter settings
 cmd:option('-batch_size',500,'batch_size for each iterations')
-cmd:option('-input_encoding_size_vgg', 200, 'he encoding size of each token in the vocabulary')
+cmd:option('-input_encoding_size_vgg', 512, 'he encoding size of each token in the vocabulary')
 cmd:option('-rnn_size_vgg',512,'size of the rnn in number of hidden nodes in each layer')
-cmd:option('-input_encoding_size_incep', 200, 'he encoding size of each token in the vocabulary')
+cmd:option('-input_encoding_size_incep', 512, 'he encoding size of each token in the vocabulary')
 cmd:option('-rnn_size_incep',512,'size of the rnn in number of hidden nodes in each layer')
-cmd:option('-rnn_layer',2,'number of the rnn layer')
+cmd:option('-rnn_layer',1,'number of the rnn layer')
 cmd:option('-common_embedding_size', 1024, 'size of the common embedding vector')
 cmd:option('-num_output', 1000, 'number of output answers')
 cmd:option('-vgg_norm', 1, 'normalize the vgg image feature. 1 = normalize, 0 = not normalize')

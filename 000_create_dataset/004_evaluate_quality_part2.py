@@ -20,8 +20,8 @@ filteredTrainNouns = set()
 filteredTestNouns = set()
 
 # Verify that train and novel words have no overlap
-print('Novel nouns in train: %d'%(len(set(allTrainNouns)&testNouns)))
-print(set(allTrainNouns) & testNouns)
+print('# Novel nouns in train: %d'%(len(set(allTrainNouns)&testNouns)))
+print('Novel nouns in train: ', set(allTrainNouns) & testNouns)
 
 for n in allTrainNouns:
     if n in trainNouns:

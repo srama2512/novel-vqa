@@ -4,18 +4,18 @@ Code to tokenize the questions and answers, tag them and
 create a count over the singular nouns present in the train dataset.
 """
 
-import nltk
-import string
-from random import shuffle, seed
 import os
-import json
-from nltk.tokenize import word_tokenize
-import argparse
-from joblib import Parallel, delayed
-from joblib import load, dump
-from nltk.tag.perceptron import PerceptronTagger
 import sys
 import pdb
+import json
+import nltk
+import string
+import argparse
+from joblib import load, dump
+from random import shuffle, seed
+from joblib import Parallel, delayed
+from nltk.tokenize import word_tokenize
+from nltk.tag.perceptron import PerceptronTagger
 
 def prepro_sentence(sent):
     sent_prepro = sent.encode('utf-8').lower().translate(None, string.punctuation).strip().split()
@@ -59,20 +59,21 @@ def prepro_question(imgs, anns, params):
     for i,img in enumerate(imgs):
         s = img['question']
         txt = word_tokenize(s.lower().replace('/',' '))
-        answerSet = []
+        answerList = []
         
         for ans in anns[i]['answers']:
             ans_ws = word_tokenize(ans['answer'].lower().replace('/', ' '))
             add_check = 0
-            for aS in answerSet:
+            for aS in answeListt:
                 if ans_ws == aS:
                     add_check = 1
                     break
             if add_check == 0:
-                answerSet.append(ans_ws)
+                answerList.append(ans_ws)
 
         img['processed_tokens'] = txt
-        img['processed_ans_tokens'] = list(answerSet)
+        # List of tokenized answers
+        img['processed_ans_tokens'] = answerList
         if i < 10: print txt
         if i % 1000 == 0:
             sys.stdout.write("processing %d/%d (%.2f%% done)   \r" %  (i, len(imgs), i*100.0/len(imgs)) )
@@ -98,18 +99,13 @@ def get_nouns_vqa(imgs, taggers, threadidx):
 
         for w in qTagged:
             if w[1] == 'NN':
-                if w[0] not in nouns_count:
-                    nouns_count[w[0]] = 1
-                else:
-                    nouns_count[w[0]] += 1
+                nouns_count[w[0]] = nouns_count.get(w[0], 0) + 1
+        
         for aT in img['processed_ans_tokens']:
             aTagged = taggers.tag(aT)
             for w in aTagged:
                 if w[1] == 'NN':
-                    if w[0] not in nouns_count:
-                        nouns_count[w[0]] =1
-                    else:
-                        nouns_count[w[0]] += 1
+                    nouns_count[w[0]] = nouns_count.get(w[0], 0) + 1
 
         if count_temp % 1000 == 0:
             print('threadIdx:%d   Progress:(%d/%d)'%(threadidx, count_temp, totalLen))
