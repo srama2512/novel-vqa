@@ -139,7 +139,7 @@ def main_vqa(params):
     imgs_train = []
     imgs_test = []
 
-    if not os.path.isfile('preprocessed/VQA.json'):
+    if not os.path.isfile(os.path.join(params['save_path'], 'VQA.json')):
         imgs_train = json.load(open(params['input_train_json'], 'r'))
         imgs_test = json.load(open(params['input_test_json'], 'r'))
         anns_train = json.load(open(params['input_train_annotations'], 'r'))['annotations']
@@ -163,15 +163,15 @@ def main_vqa(params):
         # tokenization and preprocessing testing question
         imgs_test = prepro_question(imgs_test, anns_test, params)
         VQAdata = {'imgs_train': imgs_train, 'imgs_test': imgs_test}
-        json.dump(VQAdata, open('preprocessed/VQA.json', 'w'))
+        json.dump(VQAdata, open(os.path.join(params['save_path'], 'VQA.json'), 'w'))
     
     else:
-        print('The preprocessed data for VQA already exists @ preprocessed/VQA.json')
-        VQAdata = json.load(open('preprocessed/VQA.json'))
+        print('The preprocessed data for VQA already exists @ %s'%(os.path.join(params['save_path'], 'VQA.json')))
+        VQAdata = json.load(open(os.path.join(params['save_path'], 'VQA.json')))
         imgs_train = VQAdata["imgs_train"]
         imgs_test = VQAdata["imgs_test"]
 
-    if not os.path.isfile("preprocessed/nouns_vqa.json"):
+    if not os.path.isfile(os.path.join(params['save_path'], "nouns_vqa.json")):
         # get the nouns from the train set
         nouns_train, nouns_train_count = get_nouns_vqa_parallel(imgs_train, 18)
         # get the nouns from the test set
@@ -179,11 +179,11 @@ def main_vqa(params):
 
         total_set = {"nouns_train": nouns_train, "nouns_train_count": nouns_train_count, "nouns_test": nouns_test,  "nouns_test_count": nouns_test_count}
 
-        json.dump(total_set, open("preprocessed/nouns_vqa.json", 'w'))
+        json.dump(total_set, open(os.path.join(params['save_path'], "nouns_vqa.json"), 'w'))
 
     else:
         print('The preprocessed nouns for VQA already exists @ preprocessed/nouns_vqa.json')
-        total_set = json.load(open("preprocessed/nouns_vqa.json"))
+        total_set = json.load(open(os.path.join(params['save_path'], "nouns_vqa.json")))
 
 if __name__ == "__main__":
 
@@ -197,6 +197,8 @@ if __name__ == "__main__":
     parser.add_argument('--max_length', default=16, type=int, help='max length of a sentence in number of words')
     parser.add_argument('--num_ans', default=1000, type=int, help="number of answers in vqa")
     parser.add_argument('--extern_ans_vocab', default='', type=str, help='Give previously computed answer vocab')
+    parser.add_argument('--save_path', default='preprocessed/', type=str, help='Path to save the preprocessed data')
+
     args = parser.parse_args()
     params = vars(args) # convert to ordinary dict
     print 'parsed input parameters:'

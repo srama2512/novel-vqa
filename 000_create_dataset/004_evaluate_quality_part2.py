@@ -7,11 +7,18 @@ Part 2:
     Ideally this should be zero. But some errors in tagging or
     degenerate nouns can cause a small intersection.
 """
+import os
 import json
+import argparse
 
-nouns_vqa = json.load(open('preprocessed/nouns_vqa.json'))
-trainNouns = set(json.load(open('preprocessed/trainNouns.json')))
-testNouns = set(json.load(open('preprocessed/testNouns.json')))
+parser = argparse.ArgumentParser()
+parser.add_argument('--save_path', default='preprocessed', type=str, help='Path where the preprocessed files are stored')
+
+params = parser.parse_args()
+
+nouns_vqa = json.load(open(os.path.join(params['save_path'], 'nouns_vqa.json')))
+trainNouns = set(json.load(open(os.path.join(params['save_path'], 'trainNouns.json'))))
+testNouns = set(json.load(open(os.path.join(params['save_path'], 'testNouns.json'))))
 
 allTrainNouns = nouns_vqa['nouns_train']
 allTestNouns = nouns_vqa['nouns_test']
