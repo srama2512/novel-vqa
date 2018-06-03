@@ -21,6 +21,9 @@ params = vars(parser.parse_args())
 nouns_vqa = json.load(open(os.path.join(params['save_path'], 'nouns_vqa.json')))
 trainNouns = set(json.load(open('trainNouns.json')))
 testNouns = set(json.load(open('testNouns.json')))
+testNounsPlural = set()
+for n in testNouns:
+    testNounsPlural.add(pluralize(n))
 
 allTrainNouns = nouns_vqa['nouns_train']
 allTestNouns = nouns_vqa['nouns_test']
@@ -32,7 +35,7 @@ filteredTestNouns = set()
 print('# Novel nouns in train: %d'%(len(set(allTrainNouns)&testNouns)))
 print('Novel nouns in train: ', set(allTrainNouns) & testNouns)
 # Number of plural forms of novel words in train set
-print('# Plural forms of Novel nouns in train: %d'(len(set(allTrainNouns) & testNounsPlural)))
+print('# Plural forms of Novel nouns in train: %d'%(len(set(allTrainNouns) & testNounsPlural)))
 print('Plural forms of Novel nouns in train', set(allTrainNouns) & testNounsPlural)
 
 for n in allTrainNouns:
