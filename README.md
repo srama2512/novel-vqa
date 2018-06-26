@@ -41,10 +41,10 @@ This code outputs `vqa_raw_train.json` and `vqa_raw_test.json`.
 4. Run the remaining scripts in `000_create_dataset` in the sequential order specified by setting the correct path parameters.
 
 Note that the random seed was initially not set for generating the data. As a result, the exact data may not be replicable.
-To ensure reproducability, we have provided the data split that we obtained [here](https://drive.google.com/drive/folders/0B_zNnwTk0MVydVRtQTgtbTl5M0k?usp=sharing).
-The files without any special tagging are the original VQA data split. The files with `_novel_old` tag are the splits used for
-our CVPR acceptance paper. The files with `_novel_new` tag are the corrected splits with 5% of questions removed. The code
-to correct the dataset is provided in `005_correction_to_dataset`. 
+**To ensure reproducability, we have provided the data split that we obtained [here](https://drive.google.com/drive/folders/0B_zNnwTk0MVydVRtQTgtbTl5M0k?usp=sharing)**.
+The files with *_orig* are the original VQA data split. The files with *_novel_v1* tag are the splits used for
+our CVPR acceptance paper. The files with *_novel_v2* tag are the corrected splits with ~8% of questions removed. The code
+we used to correct the dataset is provided in `005_correction_to_dataset`. A detailed report regarding the changes and updated results will be made available soon. 
 
 # Generated Vocabularies 
 We have provided the vocabularies we used for all our experiments in `vocabs/`. It contains the train (`vocab_train.json`), 
