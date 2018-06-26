@@ -51,4 +51,11 @@ We have provided the vocabularies we used for all our experiments in `vocabs/`. 
 oracle (`vocab_oracle.json`) and general (`vocab_general.json`) vocabularies. It also contains the list of novel words which
 we used (`list_of_novel_words.json`).
 
+# Bibtex
+```
+@article{ramakrishnan2017empirical,
+  title={An Empirical Evaluation of Visual Question Answering for Novel Objects},
+  author={Ramakrishnan, Santhosh K and Pal, Ambar and Sharma, Gaurav and Mittal, Anurag}
+}
+```
 
